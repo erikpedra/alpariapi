@@ -7,11 +7,11 @@ import alpariapi.constants as OP_code
 import alpariapi.global_value as global_value
 
 class WebsocketClient(object):
-    """Class for work with Quotex API websocket."""
+    """Class for work with Alpari API websocket."""
 
     def __init__(self, api):
         """
-        :param api: The instance of :class:`QuotexAPI
+        :param api: The instance of :class:`AlpariAPI
             <alpariapi.api.AlpariAPI>`.
         """
         self.api = api
