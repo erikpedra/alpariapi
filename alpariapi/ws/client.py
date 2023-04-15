@@ -20,9 +20,23 @@ class WebsocketClient(object):
             on_error=self.on_error, on_close=self.on_close,
             on_open=self.on_open)
         
-    def on_message(self, message): # pylint: disable=unused-argument
+    def on_message(self, wss, raw_message_s): # pylint: disable=unused-argument
         """Method to process websocket messages."""
         global_value.ssl_Mutual_exclusion=True
+        raw_message = json.loads(str(raw_message_s))
+        if global_value.client_callback != None:
+            global_value.client_callback(raw_message_s)
+        if raw_message['type'] == 'EVENT' and raw_message['action'] == 'option':
+            _id = raw_message['body']['id']
+            self.api.event_option_data[_id] = raw_message
+        if 'rid' not in raw_message and raw_message['type'] == 'RESPONSE':
+            self.api.RESPONSE_data[None] = raw_message
+        if 'rid' in raw_message and raw_message['type'] == 'RESPONSE':
+            self.api.RESPONSE_data[raw_message['rid']] = raw_message
+        if 'sid' in raw_message:
+            self.api.sid_get_data[raw_message['sid']] = raw_message
+        if raw_message['action'] == 'trade_settings':
+            raw_payment = raw_message
         
     @staticmethod
     def on_error(wss, error):  # pylint: disable=unused-argument
